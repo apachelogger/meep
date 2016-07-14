@@ -27,7 +27,7 @@ class SFTPBridge
   attr_reader :port
 
   def initialize
-    @host = 'localhost'
+    # @host = 'localhost'
     @port = ENV.fetch('PORT', 3000)
     @server_thread = nil
   end
@@ -57,8 +57,7 @@ class SFTPBridge
   def start_thread(callback)
     Thread.new do
       Thread.abort_on_exception = true
-      server = WEBrick::HTTPServer.new(BindAddress: @host,
-                                       Port: @port,
+      server = WEBrick::HTTPServer.new(Port: @port,
                                        StartCallback: callback)
       @port = server.listeners[0].addr[1]
       server.mount('/', SFTPBridgeServlet)
