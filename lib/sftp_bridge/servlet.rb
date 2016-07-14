@@ -27,7 +27,8 @@ require_relative 'file_io_compat'
 class SFTPBridgeServlet < WEBrick::HTTPServlet::AbstractServlet
   def initialize(*args)
     super
-    @sftp = Net::SFTP.start('depot.kde.org', 'ftpubuntu')
+    puts ENV.fetch('SSH_KEY')
+    @sftp = Net::SFTP.start('depot.kde.org', 'ftpneon', key_data: [ENV.fetch('SSH_KEY')])
   end
 
   def do_GET(request, response)
