@@ -45,6 +45,7 @@ class SFTPBridgeServlet < WEBrick::HTTPServlet::AbstractServlet
   private
 
   def get_dir(path, request, response)
+    puts "get_dir(#{path})"
     @sftp.dir.glob(path, '*') do |entry|
       response.body << format("<a href='%s'></a>\n",
                               request.request_uri + entry.name)
