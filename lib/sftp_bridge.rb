@@ -61,7 +61,7 @@ class SFTPBridge
                                        StartCallback: callback)
       @port = server.listeners[0].addr[1]
       server.mount('/', SFTPBridgeServlet)
-      trap 'INT' do server.shutdown end
+      # trap 'INT' do server.shutdown end
       server.start
     end
   end
@@ -70,7 +70,7 @@ class SFTPBridge
           server = WEBrick::HTTPServer.new(Port: @port)
           @port = server.listeners[0].addr[1]
           server.mount('/', SFTPBridgeServlet)
-          trap 'INT' do server.shutdown end
+          # trap 'INT' do server.shutdown end
           server.start
         end
 
