@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
+fork do
 require 'bundler/setup'
 require_relative '../lib/sftp_bridge'
 
 puts "get_dir"
 SFTPBridge.new.send :start_server
+end
