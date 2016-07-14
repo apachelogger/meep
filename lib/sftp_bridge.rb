@@ -66,6 +66,15 @@ class SFTPBridge
     end
   end
 
+  def start_server
+          server = WEBrick::HTTPServer.new(Port: @port,
+                                           StartCallback: callback)
+          @port = server.listeners[0].addr[1]
+          server.mount('/', SFTPBridgeServlet)
+          trap 'INT' do server.shutdown end
+          server.start
+        end
+
   def stop
     @server_thread.kill
     @server_thread = nil
