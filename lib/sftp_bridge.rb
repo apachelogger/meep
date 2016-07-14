@@ -71,7 +71,6 @@ class SFTPBridge
           @port = server.listeners[0].addr[1]
           server.mount('/', SFTPBridgeServlet)
           trap 'INT' do server.shutdown end
-            trap 'KILL' do server.shutdown end
               trap 'TERM' do server.shutdown end
           server.start
         end
