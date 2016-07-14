@@ -27,16 +27,20 @@ require_relative 'file_io_compat'
 class SFTPBridgeServlet < WEBrick::HTTPServlet::AbstractServlet
   def initialize(*args)
     super
-    puts ENV.fetch('SSH_KEY')
-    @sftp = Net::SFTP.start('depot.kde.org', 'ftpneon', key_data: [ENV.fetch('SSH_KEY')])
+    puts ENV.fetch('SSH_KEY', nil)
+    key = ENV.fetch('SSH_KEY', nil)
+    args = {}
+    args = { key_data: [key] } if key
+    @sftp = Net::SFTP.start('depot.kde.org', 'ftpneon', **args)
   end
 
   def do_GET(request, response)
     remote_path = "/home/ftpneon/#{request.path}"
     puts "do_GET #{remote_path}"
-    if @sftp.file.directory?(remote_path)
+    stat = @sftp.stat!(remote_path)
+    if stat.directory?
       get_dir(remote_path, request, response)
-    else
+    elsif stat.file?
       get_file(remote_path, request, response)
     end
   rescue Net::SFTP::StatusException => e
@@ -46,10 +50,9 @@ class SFTPBridgeServlet < WEBrick::HTTPServlet::AbstractServlet
   private
 
   def get_dir(path, request, response)
-    puts "get_dir(#{path})"
-    @sftp.dir.glob(path, '*') do |entry|
+    @sftp.dir.foreach(path) do |entry|
       response.body << format("<a href='%s'></a>\n",
-                              request.request_uri + entry.name)
+                              File.join(request.request_uri.to_s, entry.name))
     end
   end
 
