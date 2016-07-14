@@ -32,7 +32,7 @@ class SFTPBridgeServlet < WEBrick::HTTPServlet::AbstractServlet
   end
 
   def do_GET(request, response)
-    remote_path = "/home/ftpubuntu/#{request.path}"
+    remote_path = "/home/ftpneon/#{request.path}"
     if @sftp.file.directory?(remote_path)
       get_dir(remote_path, request, response)
     else
