@@ -1,4 +1,3 @@
-#!/usr/bin/env ruby
 # frozen_string_literal: true
 #
 # Copyright (C) 2016 Harald Sitter <sitter@kde.org>
@@ -19,10 +18,18 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-require 'bundler/setup'
-# require_relative '../lib/sftp_bridge'
-require_relative '../lib/sftp_bridge_sin'
+require_relative 'sftp_bridge'
+require_relative 'watch_interceptor'
 
-SFTPBridgeServlet.run!
-
-# SFTPBridge.new.send :start_server
+module NCI
+  # Intercepts watch calls and runs them through SFTP instead.
+  module SFTPWatchInterceptor
+    def self.intercept(path)
+      SFTPBridge.new.run do |bridge|
+        WatchInterceptor.intercept(path, port: bridge.port) do
+          yield
+        end
+      end
+    end
+  end
+end
